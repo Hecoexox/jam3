@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -10,17 +9,12 @@ public class CameraSwitcher : MonoBehaviour
 
     private void Start()
     {
-        // Tüm kameralarý bul ve listeye ekle
-        //cameras.AddRange(FindObjectsOfType<Camera>());
-
-        // Tüm karakterleri de listeye ekle (Tag ile filtreleme yapýlabilir)
-       // characters.AddRange(GameObject.FindGameObjectsWithTag("Player"));
 
         // Baþlangýçta tüm kameralarý ve karakterleri devre dýþý býrak
         for (int i = 0; i < cameras.Count; i++)
         {
             cameras[i].gameObject.SetActive(false);
-            if (i < characters.Count) characters[i].SetActive(false);   
+            if (i < characters.Count) characters[i].SetActive(false);
         }
 
         // Ýlk kamera ve ona ait karakteri aç

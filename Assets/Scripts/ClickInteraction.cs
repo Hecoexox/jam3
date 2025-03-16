@@ -102,7 +102,12 @@ public class ClickInteraction : MonoBehaviour
             Debug.Log("Bilgisayara týkladýn!");
             ComputerGame();
         }
+        
     }
+    else if (myCharacter != null && myCharacter.currentTilePosition == new Vector2(1f,2f)) {
+            pickUpItemScript.PutDownToScanner();
+            PlayerItemCheck.instance.SetItemPickedUp(false);
+        }
 }
     void OnMouseEnter()
     {
@@ -143,4 +148,6 @@ public class ClickInteraction : MonoBehaviour
             yield return null;
         }
     }
+
+  
 }

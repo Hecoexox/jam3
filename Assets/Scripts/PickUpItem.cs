@@ -9,17 +9,24 @@ public class PickUpItem : MonoBehaviour
     private bool isPickedUp = false; // Objenin elde olup olmadýðýný kontrol eder
     private Transform originalParent; // Objeyi býrakýrken eski parent'ýna geri döndürmek için
     private Vector3 originalPosition; // Objeyi býrakýrken eski konumuna geri döndürmek için
+    public Transform scannerParent; 
+    private Vector3 scannerPosition;
 
+    public GameObject caharacter;
+    private Character character;
     void Start()
     {
+        character = caharacter.GetComponent<Character>();
         originalParent = transform.parent; // Objeyi aldýðýmýzda eski parent'ý sakla
         originalPosition = transform.position; // Ýlk konumu sakla
+        scannerPosition = scannerParent.transform.position;
     }
 
     public void PickUpThisItem(GameObject item)
     {
         isPickedUp = true;
         StartCoroutine(MoveItemSmoothly(item, targetPosition.position)); // Objeyi yumuþak þekilde taþý
+        
         item.transform.SetParent(targetPosition); // Objeyi karaktere baðla
     }
 
@@ -29,6 +36,12 @@ public class PickUpItem : MonoBehaviour
         transform.SetParent(null); // Objeyi serbest býrak
         StartCoroutine(MoveItemSmoothly(gameObject, originalPosition)); // Objeyi eski yerine smooth döndür
     }
+    public void PutDownToScanner()
+    {
+        isPickedUp = false;
+        transform.SetParent(null); // Objeyi serbest býrak
+        StartCoroutine(MoveItemToScanner(gameObject, scannerPosition));
+    }
 
     public bool IsPickedUp()
     {
@@ -37,6 +50,7 @@ public class PickUpItem : MonoBehaviour
 
     private IEnumerator MoveItemSmoothly(GameObject item, Vector3 targetPos)
     {
+      
         float elapsedTime = 0f;
         float duration = 0.2f; // Hareketin süresi (0.5 saniye)
         Vector3 startPos = item.transform.position;
@@ -51,4 +65,25 @@ public class PickUpItem : MonoBehaviour
 
         item.transform.position = targetPos; // Son pozisyonu tam olarak ayarla
     }
+    private IEnumerator MoveItemToScanner(GameObject item, Vector3 targetPos)
+    {
+        item.transform.SetParent(null);
+        float elapsedTime = 0f;
+        float duration = 0.2f; // Hareketin süresi (0.5 saniye)
+        Vector3 startPos = item.transform.position;
+
+        while (elapsedTime < duration)
+        {
+            elapsedTime += Time.deltaTime;
+            float t = elapsedTime / duration; // 0 ile 1 arasýnda bir deðer
+            item.transform.position = Vector3.Lerp(startPos, targetPos, t); // Pozisyonu yumuþakça deðiþtir
+            yield return null;
+        }
+
+        item.transform.position = targetPos; // Son pozisyonu tam olarak ayarla
+    }
+  
+
+
+
 }

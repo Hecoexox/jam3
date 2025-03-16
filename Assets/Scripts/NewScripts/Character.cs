@@ -9,7 +9,7 @@ public class Character : MonoBehaviour
     public float rotationSpeed = 300f; // Rotation speed (degrees per second)
     public int gridWidth = 3; // Grid width (columns)
     public int gridHeight = 5; // Grid height (rows)
-
+    public bool isInScannerTile = false;
     private Vector3 targetPosition;
     private Quaternion targetRotation;
     private bool isRotating = false; // Prevents movement while turning
@@ -31,6 +31,7 @@ public class Character : MonoBehaviour
         HandleInput();
         SmoothMove();
         SmoothRotate();
+        tileScanner();
 
         currentTilePosition = GetTilePosition(transform.position);
     }
@@ -120,7 +121,14 @@ public class Character : MonoBehaviour
         return new Vector2Int(x, y);
     }
 
-    //TIKLANABÝLÝR NESNELER
+     public void tileScanner()
+    {
+        if(currentTilePosition == new Vector2(1f,2f))
+        {
+            isInScannerTile = true;
+        }
+    }
+    
 
 
 

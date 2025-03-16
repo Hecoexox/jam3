@@ -14,6 +14,9 @@ public class CharacterController2D : MonoBehaviour
     private Rigidbody2D rb;
     private bool isGrounded;
 
+    private bool canInteract = false;
+    private GameObject tosbagaObject;
+
     void Start()
     {
         animator = GetComponent<Animator>();
@@ -29,6 +32,13 @@ public class CharacterController2D : MonoBehaviour
         float moveDirection = Input.GetAxisRaw("Horizontal");
         bool isJumped = Input.GetKeyDown(KeyCode.W);
         bool isSpeaking = Input.GetKey(KeyCode.LeftShift);
+        bool isAttacking = Input.GetKey(KeyCode.E);
+
+        // Eðer karakter fýrlatýlýyorsa, hareketi güncelleme!
+        if (Mathf.Abs(rb.velocity.x) > moveSpeed || Mathf.Abs(rb.velocity.y) > jumpForce)
+        {
+            return; // Fýrlatma yapýldýysa bu karede hareket kodlarýný çalýþtýrma
+        }
 
         // Hareketi Rigidbody2D ile saðla
         rb.velocity = new Vector2(moveDirection * moveSpeed, rb.velocity.y);
@@ -41,8 +51,21 @@ public class CharacterController2D : MonoBehaviour
             animator.SetTrigger("Jump");
         }
 
-        animator.SetBool("isWalking", moveDirection != 0 && !isSpeaking);
+        // Saldýrý giriþini kontrol et
+        if (isAttacking)
+        {
+            animator.SetTrigger("Attack");
+        }
+
+        // Tosbaga ile etkileþim kontrolü
+        if (canInteract && Input.GetKeyDown(KeyCode.E) && tosbagaObject != null)
+        {
+            tosbagaObject.SetActive(false);
+        }
+
+        animator.SetBool("isWalking", moveDirection != 0 && !isSpeaking && !isAttacking);
         animator.SetBool("isSpeaking", isSpeaking);
+        animator.SetBool("isAttacking", isAttacking);
 
         if (moveDirection != 0)
         {
@@ -73,6 +96,15 @@ public class CharacterController2D : MonoBehaviour
         if (collision.gameObject.CompareTag("Ground"))
         {
             isGrounded = true;
+        }
+    }
+
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("Tosbaga"))
+        {
+            canInteract = true;
+            tosbagaObject = collision.gameObject;
         }
     }
 }
